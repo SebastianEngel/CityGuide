@@ -37,8 +37,10 @@ public class PlacesListAdapter extends RecyclerView.Adapter<PlacesListAdapter.Vi
 
     public void setPlaces(List<Place> places) {
         this.places.clear();
+        notifyItemRangeRemoved(0, this.places.size());
+
         this.places.addAll(places);
-        this.notifyDataSetChanged();
+        notifyItemRangeInserted(0, places.size());
     }
 
     @Override
