@@ -2,10 +2,10 @@ package com.github.sebastianengel.cityguide.ui;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -20,26 +20,19 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 
 /**
- * Adapter for the {@link com.github.sebastianengel.cityguide.ui.PlacesListFragment}.
+ * Adapter for the RecyclerView in {@link com.github.sebastianengel.cityguide.ui.PlacesListFragment}.
  *
  * @author Sebastian Engel
  */
-public class PlacesListAdapter extends BaseAdapter {
+public class PlacesListAdapter extends RecyclerView.Adapter<PlacesListAdapter.ViewHolder> {
 
-    private final Context context;
     private final List<Place> places;
-    private final Drawable barDrawable;
-    private final Drawable cafeDrawable;
-    private final Drawable bistroDrawable;
+    private Drawable barDrawable;
+    private Drawable cafeDrawable;
+    private Drawable bistroDrawable;
 
-    public PlacesListAdapter(Context context) {
-        this.context = context;
+    public PlacesListAdapter() {
         this.places = new ArrayList<>();
-
-        // Load the drawables only once here, not on each getView() call.
-        this.barDrawable = context.getResources().getDrawable(R.drawable.ic_bar);
-        this.cafeDrawable = context.getResources().getDrawable(R.drawable.ic_cafe);
-        this.bistroDrawable = context.getResources().getDrawable(R.drawable.ic_bistro);
     }
 
     public void setPlaces(List<Place> places) {
@@ -49,18 +42,22 @@ public class PlacesListAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolder viewHolder;
+    public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+        Context context = viewGroup.getContext();
 
-        if (convertView == null) {
-            convertView = LayoutInflater.from(context).inflate(R.layout.list_item_places, parent, false);
-            viewHolder = new ViewHolder(convertView);
-            convertView.setTag(viewHolder);
-        } else {
-            viewHolder = (ViewHolder) convertView.getTag();
-        }
+        View listItemView = LayoutInflater.from(context).inflate(R.layout.list_item_places, viewGroup, false);
 
-        Place place = getItem(position);
+        // Load the drawables only once here, not on each binding.
+        this.barDrawable = context.getResources().getDrawable(R.drawable.ic_bar);
+        this.cafeDrawable = context.getResources().getDrawable(R.drawable.ic_cafe);
+        this.bistroDrawable = context.getResources().getDrawable(R.drawable.ic_bistro);
+
+        return new ViewHolder(listItemView);
+    }
+
+    @Override
+    public void onBindViewHolder(ViewHolder viewHolder, int position) {
+        Place place = places.get(position);
 
         viewHolder.name.setText(place.name);
         viewHolder.ratingBar.setRating(place.rating);
@@ -76,32 +73,21 @@ public class PlacesListAdapter extends BaseAdapter {
                 viewHolder.icon.setImageDrawable(bistroDrawable);
                 break;
         }
-
-        return convertView;
     }
 
     @Override
-    public int getCount() {
+    public int getItemCount() {
         return places.size();
     }
 
-    @Override
-    public Place getItem(int position) {
-        return places.get(position);
-    }
-
-    @Override
-    public long getItemId(int position) {
-        return places.get(position).hashCode();
-    }
-
-    static class ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder {
         @InjectView(R.id.icon) ImageView icon;
         @InjectView(R.id.name) TextView name;
         @InjectView(R.id.rating_bar) RatingBar ratingBar;
 
-        ViewHolder(View view) {
-            ButterKnife.inject(this, view);
+        public ViewHolder(View listItemView) {
+            super(listItemView);
+            ButterKnife.inject(this, listItemView);
         }
     }
 

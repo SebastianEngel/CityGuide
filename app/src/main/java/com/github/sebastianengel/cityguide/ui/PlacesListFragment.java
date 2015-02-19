@@ -3,10 +3,11 @@ package com.github.sebastianengel.cityguide.ui;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 
 import com.github.sebastianengel.cityguide.CityGuideApp;
 import com.github.sebastianengel.cityguide.R;
@@ -33,10 +34,10 @@ public class PlacesListFragment extends Fragment {
 
     @Inject PlacesService placesService;
 
-    @InjectView(R.id.list_view) ListView listView;
+    @InjectView(R.id.list) RecyclerView recyclerView;
 
+    private PlacesListAdapter listAapter;
     private CompositeSubscription subscriptions = new CompositeSubscription();
-    private PlacesListAdapter listAdapter;
 
     ///////////////////////////////////////////////////////////////////////////
     // Fragment instantiation
@@ -65,33 +66,13 @@ public class PlacesListFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.inject(this, view);
-
-        listAdapter = new PlacesListAdapter(getActivity());
-        listView.setAdapter(listAdapter);
+        setupRecyclerView();
     }
 
     @Override
     public void onStart() {
         super.onStart();
-
-        subscriptions.add(
-            placesService.loadPlaces(PlacesType.BAR)
-                .subscribe(
-                    new Action1<List<Place>>() {
-                        @Override
-                        public void call(List<Place> places) {
-                            Timber.d("Success");
-                            listAdapter.setPlaces(places);
-                        }
-                    },
-                    new Action1<Throwable>() {
-                        @Override
-                        public void call(Throwable throwable) {
-                            Timber.d("Failure");
-                            Timber.w(throwable.getMessage());
-                        }
-                    }
-                ));
+        loadPlaces();
     }
 
     @Override
@@ -101,6 +82,38 @@ public class PlacesListFragment extends Fragment {
         if (subscriptions.isUnsubscribed()) {
             subscriptions.unsubscribe();
         }
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Internal behavior
+    ///////////////////////////////////////////////////////////////////////////
+
+    private void setupRecyclerView() {
+        listAapter = new PlacesListAdapter();
+        recyclerView.setAdapter(listAapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerView.setHasFixedSize(true);
+    }
+
+    private void loadPlaces() {
+        subscriptions.add(
+            placesService.loadPlaces(PlacesType.BAR)
+                .subscribe(
+                        new Action1<List<Place>>() {
+                            @Override
+                            public void call(List<Place> places) {
+                                Timber.d("Success");
+                                listAapter.setPlaces(places);
+                            }
+                        },
+                        new Action1<Throwable>() {
+                            @Override
+                            public void call(Throwable throwable) {
+                                Timber.d("Failure");
+                                Timber.w(throwable.getMessage());
+                            }
+                        }
+                ));
     }
 
 }
