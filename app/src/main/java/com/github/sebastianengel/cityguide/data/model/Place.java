@@ -12,5 +12,6 @@ public class Place {
     public float latitude;
     public float longitude;
     public float rating;
+    public PlacesType type;
 
 }

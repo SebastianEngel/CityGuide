@@ -13,23 +13,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.github.sebastianengel.cityguide.CityGuideApp;
 import com.github.sebastianengel.cityguide.R;
-import com.github.sebastianengel.cityguide.domain.PlacesService;
-
-import javax.inject.Inject;
-
-import rx.functions.Action1;
-import rx.subscriptions.CompositeSubscription;
-import timber.log.Timber;
 
 
-public class MainActivity extends ActionBarActivity
-        implements NavigationDrawerFragment.NavigationDrawerCallbacks {
-
-    @Inject PlacesService placesService;
-
-    private CompositeSubscription subscriptions = new CompositeSubscription();
+public class MainActivity extends ActionBarActivity implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -46,47 +33,13 @@ public class MainActivity extends ActionBarActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        CityGuideApp.get(this).inject(this);
-
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
+
         mTitle = getTitle();
 
         // Set up the drawer.
-        mNavigationDrawerFragment.setUp(
-                R.id.navigation_drawer,
-                (DrawerLayout) findViewById(R.id.drawer_layout));
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-        subscriptions.add(
-            placesService.loadPlaces(PlacesService.PlacesType.BAR)
-                .subscribe(
-                    new Action1<Object>() {
-                        @Override
-                        public void call(Object o) {
-                            Timber.d("Success");
-                        }
-                    },
-                    new Action1<Throwable>() {
-                        @Override
-                        public void call(Throwable throwable) {
-                            Timber.d("Failure");
-                        }
-                    }
-                ));
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-
-        if (subscriptions.isUnsubscribed()) {
-            subscriptions.unsubscribe();
-        }
+        mNavigationDrawerFragment.setUp(R.id.navigation_drawer,(DrawerLayout) findViewById(R.id.drawer_layout));
     }
 
     @Override
@@ -94,7 +47,7 @@ public class MainActivity extends ActionBarActivity
         // update the main content by replacing fragments
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
-                .replace(R.id.container, PlaceholderFragment.newInstance(position + 1))
+                .replace(R.id.container, PlacesListFragment.newInstance())
                 .commit();
     }
 

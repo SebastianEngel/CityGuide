@@ -5,6 +5,7 @@ import android.location.Location;
 import com.github.sebastianengel.cityguide.data.api.IPlacesApi;
 import com.github.sebastianengel.cityguide.data.api.PlacesSearchResponse;
 import com.github.sebastianengel.cityguide.data.model.Place;
+import com.github.sebastianengel.cityguide.data.model.PlacesType;
 
 import java.util.List;
 
@@ -24,8 +25,6 @@ import rx.schedulers.Schedulers;
 @Singleton
 public class PlacesService {
 
-    public enum PlacesType {BAR, CAFE, RESTAURANT}
-
     private final ReactiveLocationProvider locationProvider;
     private final IPlacesApi placesApi;
 
@@ -40,8 +39,6 @@ public class PlacesService {
         // can be thrown on #getLastLocation(com.google.android.gms.common.api.GoogleApiClient). Everything is delivered by {@link rx.Observer#onError(Throwable)}.
 
         return locationProvider.getLastKnownLocation()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
             // With the location from the location provider, request nearby places from the Places API.
             // If the last known location is not available, throw a ServiceException to indicate a problem.
             .flatMap(new Func1<Location, Observable<PlacesSearchResponse>>() {
@@ -57,17 +54,28 @@ public class PlacesService {
             })
             // Check the response status and return the list of places.
             // If the status is != OK, throw a ServiceException to indicate a problem.
-            .flatMap(new Func1<PlacesSearchResponse, Observable<List<Place>>>() {
+            .flatMap(new Func1<PlacesSearchResponse, Observable<Place>>() {
                 @Override
-                public Observable<List<Place>> call(PlacesSearchResponse response) {
+                public Observable<Place> call(PlacesSearchResponse response) {
                     if (response.status == PlacesSearchResponse.Status.OK) {
-                        return Observable.just(response.places);
+                        return Observable.from(response.places);
                     }
 
                     throw new ServiceException(String.format("Requesting places from Google Places API failed."
-                        + " Status: %s, error message: %s", response.status, response.errorMessage));
+                            + " Status: %s, error message: %s", response.status, response.errorMessage));
                 }
             })
+            // Set the place type for each place.
+            .map(new Func1<Place, Place>() {
+                @Override
+                public Place call(Place place) {
+                    place.type = placesType;
+                    return place;
+                }
+            })
+            .toList()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
         ;
 
     }

@@ -9,7 +9,7 @@ import dagger.Module;
  */
 @Module(
     injects = {
-        MainActivity.class
+        PlacesListFragment.class
     },
     complete = false,
     library = false

@@ -1,8 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+
 <resources>
 
-    <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
+    <style name="Theme.CityGuide.PlaceName" parent="TextAppearance.AppCompat.Medium">
+        <item name="android:textColor">@color/textColorPrimary</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="Theme.CityGuide.PlaceRatingBar" parent="@android:style/Widget.RatingBar">
+        <item name="android:progressDrawable">@drawable/ratings</item>
+        <item name="android:minHeight">@dimen/rating_bar_min_height</item>
+        <item name="android:maxHeight">@dimen/rating_bar_max_height</item>
+        <item name="android:numStars">5</item>
+        <item name="android:isIndicator">true</item>
     </style>
 
 </resources>
