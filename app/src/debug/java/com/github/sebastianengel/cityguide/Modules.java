@@ -9,9 +9,9 @@ public final class Modules {
 
     private Modules() {}
 
-    public static Object[] list() {
+    public static Object[] list(CityGuideApp app) {
         return new Object[] {
-            new CityGuideModule()
+            new CityGuideModule(app)
         };
     }
 }

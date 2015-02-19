@@ -20,11 +20,16 @@ import com.github.sebastianengel.cityguide.domain.PlacesService;
 import javax.inject.Inject;
 
 import rx.functions.Action1;
+import rx.subscriptions.CompositeSubscription;
 import timber.log.Timber;
 
 
 public class MainActivity extends ActionBarActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
+
+    @Inject PlacesService placesService;
+
+    private CompositeSubscription subscriptions = new CompositeSubscription();
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -51,7 +56,37 @@ public class MainActivity extends ActionBarActivity
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
+    }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        subscriptions.add(
+            placesService.loadPlaces(PlacesService.PlacesType.BAR)
+                .subscribe(
+                    new Action1<Object>() {
+                        @Override
+                        public void call(Object o) {
+                            Timber.d("Success");
+                        }
+                    },
+                    new Action1<Throwable>() {
+                        @Override
+                        public void call(Throwable throwable) {
+                            Timber.d("Failure");
+                        }
+                    }
+                ));
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        if (subscriptions.isUnsubscribed()) {
+            subscriptions.unsubscribe();
+        }
     }
 
     @Override

@@ -10,6 +10,10 @@ android {
         targetSdkVersion 21
         versionCode 1
         versionName "1.0"
+
+        // TODO Keep that out of the build file (out of the repo)
+        buildConfigField 'String', 'GOOGLE_API_KEY', '"AIzaSyAcMlv0XkZzD0DvZ5-3uRWf49xdtDTEM2w"'
+        buildConfigField 'String', 'GOOGLE_PLACES_API_URL', '"https://maps.googleapis.com/maps/api/place"'
     }
 
     buildTypes {
@@ -34,7 +38,10 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
+
+    // Google / Android
     compile 'com.android.support:appcompat-v7:21.0.3'
+    compile 'com.google.android.gms:play-services-location:6.5.87'
 
     // UI
     compile 'com.jakewharton:butterknife:6.1.0'
@@ -48,6 +55,7 @@ dependencies {
 
     // RxJava
     compile 'io.reactivex:rxandroid:0.24.0'
+    compile 'pl.charmas.android:android-reactive-location:0.4@aar'
 
     // Network
     compile 'com.squareup.okhttp:okhttp:2.2.0'
