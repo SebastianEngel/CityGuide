@@ -36,7 +36,7 @@ public class PlacesListFragment extends Fragment {
 
     @InjectView(R.id.list) RecyclerView recyclerView;
 
-    private PlacesListAdapter listAapter;
+    private PlacesListAdapter listAdapter;
     private CompositeSubscription subscriptions = new CompositeSubscription();
 
     ///////////////////////////////////////////////////////////////////////////
@@ -84,8 +84,8 @@ public class PlacesListFragment extends Fragment {
     ///////////////////////////////////////////////////////////////////////////
 
     private void setupRecyclerView() {
-        listAapter = new PlacesListAdapter();
-        recyclerView.setAdapter(listAapter);
+        listAdapter = new PlacesListAdapter();
+        recyclerView.setAdapter(listAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setHasFixedSize(true);
     }
@@ -98,7 +98,7 @@ public class PlacesListFragment extends Fragment {
                             @Override
                             public void call(List<Place> places) {
                                 Timber.d("Success");
-                                listAapter.setPlaces(places);
+                                listAdapter.setPlaces(places);
                             }
                         },
                         new Action1<Throwable>() {
