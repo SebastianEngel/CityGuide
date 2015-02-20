@@ -67,17 +67,12 @@ public class PlacesListFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.inject(this, view);
         setupRecyclerView();
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
         loadPlaces();
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
+    public void onDestroyView() {
+        super.onDestroyView();
 
         if (subscriptions.isUnsubscribed()) {
             subscriptions.unsubscribe();
