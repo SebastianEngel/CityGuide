@@ -2,9 +2,10 @@ package com.github.sebastianengel.cityguide.ui.views;
 
 import android.annotation.TargetApi;
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.util.AttributeSet;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
@@ -13,6 +14,7 @@ import com.github.sebastianengel.cityguide.R;
 import java.util.List;
 
 import butterknife.ButterKnife;
+import butterknife.InjectView;
 import butterknife.InjectViews;
 import butterknife.OnClick;
 
@@ -23,7 +25,12 @@ import butterknife.OnClick;
  */
 public class PlaceTypeSlider extends FrameLayout {
 
+    public interface OnSelectionChangedListener {
+        void onSelectionChanged(int titleIndex);
+    }
+
     @InjectViews({R.id.title_view_1, R.id.title_view_2, R.id.title_view_3}) List<TextView> titleViews;
+    @InjectView(R.id.thumb) View thumb;
 
     private OnSelectionChangedListener onSelectionChangedListener;
 
@@ -53,18 +60,7 @@ public class PlaceTypeSlider extends FrameLayout {
     ///////////////////////////////////////////////////////////////////////////
 
     public void setSelection(int titleIndex) {
-        for (TextView titleView : titleViews) {
-            if (titleView == titleViews.get(titleIndex)) {
-                titleView.setSelected(true);
-            } else {
-                titleView.setSelected(false);
-            }
-        }
-
-        // Inform the listeners.
-        if (onSelectionChangedListener != null) {
-            onSelectionChangedListener.onSelectionChanged(titleIndex);
-        }
+        handleSelection(titleIndex);
     }
 
     public void setOnSelectionChangedListener(OnSelectionChangedListener listener) {
@@ -79,27 +75,21 @@ public class PlaceTypeSlider extends FrameLayout {
         inflate(getContext(), R.layout.view_place_type_slider, this);
         ButterKnife.inject(this);
 
-        Drawable backgroundDrawable = getContext().getResources().getDrawable(R.drawable.seekbar_background);
-        setBackground(backgroundDrawable);
+        setBackground(getContext().getResources().getDrawable(R.drawable.seekbar_background));
 
         // Explicitly set padding to 0 here as setting the background drawable would automatically
         // result in a padding set.
         setPadding(0, 0, 0, 0);
     }
 
-    private void handleSelection(int titleIndex) {
-        for (TextView titleView : titleViews) {
-            if (titleView == titleViews.get(titleIndex)) {
-                titleView.setSelected(true);
-            } else {
-                titleView.setSelected(false);
-            }
-        }
+    @Override
+    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+        super.onLayout(changed, left, top, right, bottom);
 
-        // Inform the listeners.
-        if (onSelectionChangedListener != null) {
-            onSelectionChangedListener.onSelectionChanged(titleIndex);
-        }
+        // Adjust the thumb's size to match the size of the TextViews.
+        ViewGroup.LayoutParams layoutParams = thumb.getLayoutParams();
+        layoutParams.width = titleViews.get(0).getWidth();
+        layoutParams.height = getHeight();
     }
 
     @OnClick({R.id.title_view_1, R.id.title_view_2, R.id.title_view_3})
@@ -107,8 +97,25 @@ public class PlaceTypeSlider extends FrameLayout {
         handleSelection(titleViews.indexOf(titleView));
     }
 
-    public interface OnSelectionChangedListener {
-        void onSelectionChanged(int titleIndex);
+    private void handleSelection(int titleIndex) {
+        TextView selectedTextView = titleViews.get(titleIndex);
+
+        // Mark the clicked clicked TextView as selected.
+        for (TextView titleView : titleViews) {
+            if (titleView == selectedTextView) {
+                titleView.setSelected(true);
+            } else {
+                titleView.setSelected(false);
+            }
+        }
+
+        // Now animate the thumb to be directly behind the selected TextView.
+        thumb.animate().translationX(selectedTextView.getX()).setDuration(100);
+
+        // Inform the listeners.
+        if (onSelectionChangedListener != null) {
+            onSelectionChangedListener.onSelectionChanged(titleIndex);
+        }
     }
 
 }
