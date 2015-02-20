@@ -35,8 +35,10 @@ public class PlacesService {
 
     public Observable<List<Place>> loadPlaces(final PlacesType placesType) {
         // TODO Check if location access is activated
-        // TODO Handle LocationConnectionException when there are trouble connecting with Google Play Services and other exceptions that
-        // can be thrown on #getLastLocation(com.google.android.gms.common.api.GoogleApiClient). Everything is delivered by {@link rx.Observer#onError(Throwable)}.
+        // TODO Handle LocationConnectionException when there are trouble connecting with Google Play Services
+        // and other exceptions that can be thrown on
+        // #getLastLocation(com.google.android.gms.common.api.GoogleApiClient).
+        // Everything is delivered by {@link rx.Observer#onError(Throwable)}.
 
         return locationProvider.getLastKnownLocation()
             // With the location from the location provider, request nearby places from the Places API.
@@ -52,7 +54,7 @@ public class PlacesService {
                     throw new ServiceException("User's last known location is not available (null).");
                 }
             })
-            // Check the response status and return the list of places.
+            // Check the response status and emit the places.
             // If the status is != OK, throw a ServiceException to indicate a problem.
             .flatMap(new Func1<PlacesSearchResponse, Observable<Place>>() {
                 @Override
