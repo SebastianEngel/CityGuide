@@ -11,4 +11,6 @@
     <color name="slider_title_normal">#ffffff</color>
     <color name="slider_title_selected">#f5a622</color>
 
+    <color name="error_text">#d00</color>
+
 </resources>

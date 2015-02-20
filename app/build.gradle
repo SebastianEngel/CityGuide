@@ -46,6 +46,7 @@ dependencies {
 
     // UI
     compile 'com.jakewharton:butterknife:6.1.0'
+    compile 'com.nispok:snackbar:2.9.1'
 
     // Dependency injection
     compile 'com.squareup.dagger:dagger:1.2.2'

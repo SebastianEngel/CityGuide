@@ -3,6 +3,7 @@ package com.github.sebastianengel.cityguide.ui;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -15,6 +16,8 @@ import com.github.sebastianengel.cityguide.data.model.Place;
 import com.github.sebastianengel.cityguide.data.model.PlacesType;
 import com.github.sebastianengel.cityguide.domain.PlacesService;
 import com.github.sebastianengel.cityguide.ui.views.PlaceTypeSlider;
+import com.nispok.snackbar.Snackbar;
+import com.nispok.snackbar.SnackbarManager;
 
 import java.util.List;
 
@@ -26,19 +29,25 @@ import rx.functions.Action1;
 import rx.subscriptions.CompositeSubscription;
 import timber.log.Timber;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
+
 /**
  * Fragment listing the resulting places.
  *
  * @author Sebastian Engel
  */
-public class PlacesListFragment extends Fragment {
+public class PlacesListFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
     @Inject PlacesService placesService;
 
     @InjectView(R.id.place_type_slider) PlaceTypeSlider placeTypeSlider;
+    @InjectView(R.id.swipe_container) SwipeRefreshLayout swipeContainer;
     @InjectView(R.id.list) RecyclerView recyclerView;
+    @InjectView(R.id.empty_view) View emptyView;
 
     private PlacesListAdapter listAdapter;
+    private PlacesType currentPlaceType;
     private CompositeSubscription subscriptions = new CompositeSubscription();
 
     ///////////////////////////////////////////////////////////////////////////
@@ -69,6 +78,7 @@ public class PlacesListFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.inject(this, view);
         setupPlacesSlider();
+        setupSwipeContainer();
         setupRecyclerView();
     }
 
@@ -82,6 +92,15 @@ public class PlacesListFragment extends Fragment {
     }
 
     ///////////////////////////////////////////////////////////////////////////
+    // OnRefreshListener implementation
+    ///////////////////////////////////////////////////////////////////////////
+
+    @Override
+    public void onRefresh() {
+        loadPlaces();
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
     // Internal behavior
     ///////////////////////////////////////////////////////////////////////////
 
@@ -89,26 +108,30 @@ public class PlacesListFragment extends Fragment {
         placeTypeSlider.setOnSelectionChangedListener(new PlaceTypeSlider.OnSelectionChangedListener() {
             @Override
             public void onSelectionChanged(int titleIndex) {
-                PlacesType placesType;
                 switch (titleIndex) {
                     case 0:
-                        placesType = PlacesType.BAR;
+                        currentPlaceType = PlacesType.BAR;
                         break;
                     case 1:
-                        placesType = PlacesType.RESTAURANT;
+                        currentPlaceType = PlacesType.RESTAURANT;
                         break;
                     case 2:
-                        placesType = PlacesType.CAFE;
+                        currentPlaceType = PlacesType.CAFE;
                         break;
                     default:
-                        placesType = PlacesType.BAR;
+                        currentPlaceType = PlacesType.BAR;
                         break;
                 }
-                loadPlaces(placesType);
+                loadPlaces();
             }
         });
 
         placeTypeSlider.setSelection(0);
+    }
+
+    private void setupSwipeContainer() {
+        swipeContainer.setColorSchemeResources(R.color.primary);
+        swipeContainer.setOnRefreshListener(this);
     }
 
     private void setupRecyclerView() {
@@ -118,25 +141,47 @@ public class PlacesListFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
     }
 
-    private void loadPlaces(PlacesType placesType) {
+    private void loadPlaces() {
+        swipeContainer.setRefreshing(true);
+
         subscriptions.add(
-            placesService.loadPlaces(placesType)
+            placesService.loadPlaces(currentPlaceType)
                 .subscribe(
                     new Action1<List<Place>>() {
                         @Override
                         public void call(List<Place> places) {
-                            Timber.d("Success");
                             listAdapter.setPlaces(places);
+                            swipeContainer.setRefreshing(false);
+
+                            if (listAdapter.getItemCount() < 1) {
+                                showEmptyView(true);
+                            }
                         }
                     },
                     new Action1<Throwable>() {
                         @Override
                         public void call(Throwable throwable) {
-                            Timber.d("Failure");
+                            swipeContainer.setRefreshing(false);
+
+                            showEmptyView(true);
+
+                            SnackbarManager.show(
+                                Snackbar.with(getActivity())
+                                    .textColorResource(R.color.error_text)
+                                    .text(R.string.error_loading_places));
+
                             Timber.w(throwable.getMessage());
                         }
                     }
                 ));
+    }
+
+    private void showEmptyView(boolean show) {
+        if (show) {
+            emptyView.setVisibility(VISIBLE);
+        } else {
+            emptyView.setVisibility(GONE);
+        }
     }
 
 }
