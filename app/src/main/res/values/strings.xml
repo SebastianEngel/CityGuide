@@ -1,5 +1,9 @@
 <resources>
-    <string name="app_name">CityGuide</string>
+    <string name="app_name">City Guide</string>
+
+    <string name="slider_title_bar">Bar</string>
+    <string name="slider_title_bistro">Bistro</string>
+    <string name="slider_title_cafe">Café</string>
 
     <string name="title_section1">Section 1</string>
     <string name="title_section2">Section 2</string>

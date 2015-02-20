@@ -14,6 +14,7 @@ import com.github.sebastianengel.cityguide.R;
 import com.github.sebastianengel.cityguide.data.model.Place;
 import com.github.sebastianengel.cityguide.data.model.PlacesType;
 import com.github.sebastianengel.cityguide.domain.PlacesService;
+import com.github.sebastianengel.cityguide.ui.views.PlaceTypeSlider;
 
 import java.util.List;
 
@@ -34,6 +35,7 @@ public class PlacesListFragment extends Fragment {
 
     @Inject PlacesService placesService;
 
+    @InjectView(R.id.place_type_slider) PlaceTypeSlider placeTypeSlider;
     @InjectView(R.id.list) RecyclerView recyclerView;
 
     private PlacesListAdapter listAdapter;
@@ -66,8 +68,8 @@ public class PlacesListFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.inject(this, view);
+        setupPlacesSlider();
         setupRecyclerView();
-        loadPlaces();
     }
 
     @Override
@@ -83,6 +85,32 @@ public class PlacesListFragment extends Fragment {
     // Internal behavior
     ///////////////////////////////////////////////////////////////////////////
 
+    private void setupPlacesSlider() {
+        placeTypeSlider.setOnSelectionChangedListener(new PlaceTypeSlider.OnSelectionChangedListener() {
+            @Override
+            public void onSelectionChanged(int titleIndex) {
+                PlacesType placesType;
+                switch (titleIndex) {
+                    case 0:
+                        placesType = PlacesType.BAR;
+                        break;
+                    case 1:
+                        placesType = PlacesType.RESTAURANT;
+                        break;
+                    case 2:
+                        placesType = PlacesType.CAFE;
+                        break;
+                    default:
+                        placesType = PlacesType.BAR;
+                        break;
+                }
+                loadPlaces(placesType);
+            }
+        });
+
+        placeTypeSlider.setSelection(0);
+    }
+
     private void setupRecyclerView() {
         listAdapter = new PlacesListAdapter();
         recyclerView.setAdapter(listAdapter);
@@ -90,24 +118,24 @@ public class PlacesListFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
     }
 
-    private void loadPlaces() {
+    private void loadPlaces(PlacesType placesType) {
         subscriptions.add(
-            placesService.loadPlaces(PlacesType.BAR)
+            placesService.loadPlaces(placesType)
                 .subscribe(
-                        new Action1<List<Place>>() {
-                            @Override
-                            public void call(List<Place> places) {
-                                Timber.d("Success");
-                                listAdapter.setPlaces(places);
-                            }
-                        },
-                        new Action1<Throwable>() {
-                            @Override
-                            public void call(Throwable throwable) {
-                                Timber.d("Failure");
-                                Timber.w(throwable.getMessage());
-                            }
+                    new Action1<List<Place>>() {
+                        @Override
+                        public void call(List<Place> places) {
+                            Timber.d("Success");
+                            listAdapter.setPlaces(places);
                         }
+                    },
+                    new Action1<Throwable>() {
+                        @Override
+                        public void call(Throwable throwable) {
+                            Timber.d("Failure");
+                            Timber.w(throwable.getMessage());
+                        }
+                    }
                 ));
     }
 

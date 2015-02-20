@@ -8,8 +8,14 @@
     android:padding="16dp"
     android:orientation="vertical">
 
+    <com.github.sebastianengel.cityguide.ui.views.PlaceTypeSlider
+        android:id="@+id/place_type_slider"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginBottom="@dimen/content_padding"/>
+
     <ProgressBar
-        android:id="@+id/progressBar"
+        android:id="@+id/progress_bar"
         style="?android:attr/progressBarStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -2,6 +2,11 @@
 
 <resources>
 
+    <style name="Theme.CityGuide.SliderTitle" parent="TextAppearance.AppCompat.Medium">
+        <item name="android:textColor">@color/slider_title_color</item>
+        <item name="android:gravity">center</item>
+    </style>
+
     <style name="Theme.CityGuide.PlaceName" parent="TextAppearance.AppCompat.Medium">
         <item name="android:textColor">@color/textColorPrimary</item>
         <item name="android:textStyle">bold</item>
