@@ -137,7 +137,6 @@ public class PlaceTypeSlider extends FrameLayout {
                 touchPointerIndex = event.findPointerIndex(touchPointerId);
                 touchX = event.getX(touchPointerIndex);
 
-                // Check if this counts as dragging.
                 distance = touchX - lastTouchX;
 
                 // Make sure the thumb doesn't leave the bounds of the parent container.

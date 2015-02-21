@@ -11,8 +11,8 @@ import com.google.gson.JsonParseException;
 import java.lang.reflect.Type;
 
 /**
- * Custom deserializer class used to avoid multiple to rebuild the response JSON structure with
- * custom classes, as it would be required when just using the default JSON converter and annotating fields.
+ * Custom deserializer class used to avoid having multiple custom classes to rebuild the response JSON structure
+ * as it would be required when just using the default JSON converter and annotating fields.
  *
  * @author Sebastian Engel
  */
