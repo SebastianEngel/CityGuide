@@ -180,7 +180,7 @@ public class PlaceTypeSlider extends FrameLayout {
 
         currentSelection = selectedTitleView;
 
-        // Mark the clicked clicked TextView as selected.
+        // Mark the clicked TextView as selected.
         for (TextView titleView : titleViews) {
             if (titleView == selectedTitleView) {
                 titleView.setSelected(true);
