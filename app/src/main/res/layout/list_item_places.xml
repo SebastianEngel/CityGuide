@@ -5,8 +5,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="?android:listPreferredItemHeight"
-    android:paddingTop="@dimen/content_padding"
-    android:paddingBottom="@dimen/content_padding"
+    android:paddingTop="@dimen/element_spacing"
+    android:paddingBottom="@dimen/element_spacing"
     android:clickable="true"
     android:background="?android:attr/selectableItemBackground"
     android:orientation="horizontal">
@@ -15,7 +15,7 @@
         android:id="@+id/icon"
         android:layout_width="@dimen/list_item_icon_width"
         android:layout_height="@dimen/list_item_icon_height"
-        android:layout_margin="@dimen/content_padding_half"
+        android:layout_margin="@dimen/element_padding_half"
         android:layout_gravity="top"
         android:scaleType="centerInside"
         android:src="@mipmap/ic_launcher"/>
@@ -42,7 +42,7 @@
         android:layout_below="@id/name"
         android:layout_alignLeft="@id/name"
         android:layout_alignStart="@id/name"
-        android:layout_marginTop="@dimen/content_padding_half"
+        android:layout_marginTop="@dimen/element_padding_half"
         tools:rating="3"/>
 
     <TextView

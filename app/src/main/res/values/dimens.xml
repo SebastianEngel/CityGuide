@@ -7,8 +7,9 @@
          https://developer.android.com/design/patterns/navigation-drawer.html -->
     <dimen name="navigation_drawer_width">240dp</dimen>
 
-    <dimen name="content_padding">8dp</dimen>
-    <dimen name="content_padding_half">4dp</dimen>
+    <dimen name="content_padding">16dp</dimen>
+    <dimen name="element_spacing">8dp</dimen>
+    <dimen name="element_padding_half">4dp</dimen>
 
     <dimen name="list_item_icon_width">32dp</dimen>
     <dimen name="list_item_icon_height">32dp</dimen>

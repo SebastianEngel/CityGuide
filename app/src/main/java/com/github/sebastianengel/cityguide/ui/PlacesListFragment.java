@@ -155,6 +155,8 @@ public class PlacesListFragment extends Fragment implements SwipeRefreshLayout.O
 
                             if (listAdapter.getItemCount() < 1) {
                                 showEmptyView(true);
+                            } else {
+                                showEmptyView(false);
                             }
                         }
                     },
@@ -177,11 +179,8 @@ public class PlacesListFragment extends Fragment implements SwipeRefreshLayout.O
     }
 
     private void showEmptyView(boolean show) {
-        if (show) {
-            emptyView.setVisibility(VISIBLE);
-        } else {
-            emptyView.setVisibility(GONE);
-        }
+        emptyView.setVisibility(show ? VISIBLE : GONE);
+        recyclerView.setVisibility(show ? GONE : VISIBLE);
     }
 
 }

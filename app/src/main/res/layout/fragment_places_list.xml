@@ -5,14 +5,22 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
     android:orientation="vertical">
 
-    <com.github.sebastianengel.cityguide.ui.views.PlaceTypeSlider
-        android:id="@+id/place_type_slider"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_marginBottom="@dimen/content_padding"/>
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/element_spacing"
+        android:paddingBottom="@dimen/element_spacing"
+        android:background="?attr/colorPrimary">
+
+        <com.github.sebastianengel.cityguide.ui.views.PlaceTypeSlider
+            android:id="@+id/place_type_slider"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_margin="@dimen/element_spacing"/>
+
+    </FrameLayout>
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/swipe_container"
@@ -21,7 +29,8 @@
 
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:padding="@dimen/content_padding">
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/list"
@@ -52,7 +61,7 @@
                     android:layout_marginTop="24dp"
                     android:layout_below="@id/image"
                     android:layout_centerHorizontal="true"
-                    android:text="No places to show ..."/>
+                    android:text="@string/places_list_empty"/>
 
             </RelativeLayout>
 

@@ -5,16 +5,10 @@
     <string name="slider_title_bistro">Bistro</string>
     <string name="slider_title_cafe">Café</string>
 
+    <string name="places_list_empty">No places to show …</string>
     <string name="error_loading_places">There was a problem loading the places :(</string>
-
-    <string name="title_section1">Section 1</string>
-    <string name="title_section2">Section 2</string>
-    <string name="title_section3">Section 3</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
-    <string name="action_example">Example action</string>
-
-    <string name="action_settings">Settings</string>
 </resources>
